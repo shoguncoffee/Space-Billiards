@@ -1,10 +1,12 @@
-import pygame
-
+from base import *
 
 class Matter:
     def __init__(self, file, coor, hp, mass, model):
         self.location = coor
         self.image = pygame.image.load(file)
+        pass
+    
+    def moving():
         pass
 
 
@@ -15,4 +17,5 @@ class Character(Matter):
         
     
         
-    pass
+    def melee():
+        pass

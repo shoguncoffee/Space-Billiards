@@ -1,14 +1,18 @@
 {
     "player": {
-        
-        }, 
+        "file": "player.png",
+        "hp": 100
+    },
     "kiki": {
         
-        }, 
+    }, 
     "boss": {
         
-        }, 
+    }, 
     "alien": {
         
-        }
+    },
+    "monster": {
+
+    }
 }
