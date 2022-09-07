@@ -16,6 +16,7 @@ class sc_menu:
             )
         
         self.operate = self.updater()
+        self.current_scene = 'menu'
         
     def updater():
         if in option:
