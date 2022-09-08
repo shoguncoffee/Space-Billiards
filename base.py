@@ -3,6 +3,7 @@ import random
 import tqdm
 import pymunk
 import json
+from time import *
 
 def json_to_dict(file):
     with open(file) as f:
