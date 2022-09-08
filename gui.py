@@ -1,9 +1,10 @@
 from base import *
 
-class window:
+class Window:
     def __init__(self, model, ):
         pass
     
 
-class text:
-    pass
+class Text:
+    def __init__(self, model, ):
+        pass

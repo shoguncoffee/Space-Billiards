@@ -13,8 +13,8 @@ class Game:
     window_caption = 'shogun game'
     max_fps = 60
     
-    press_key = {pygame.key.name(i): 0 for i in range(128)}
-    dataclass = [Character, Weapon, Text]
+    press_key = pygame.key.get_pressed()
+    dataclass = Character, Weapon, Text
 
     @staticmethod
     def raise_exit():
@@ -22,12 +22,9 @@ class Game:
     
     def __init__(self):
         self.input_respone = {
-            pygame.QUIT: raise_exit,
-            pygame.KEYDOWN: lambda k: self.press_key.update({pygame.key.name(k['key']): True}),
-            pygame.KEYUP: lambda k: self.press_key.update({pygame.key.name(k['key']): False}),
-            pygame.WINDOWFOCUSLOST: lambda k: 
+            pygame.QUIT: self.raise_exit,
+            pygame.WINDOWFOCUSLOST: lambda event: self.stop_game 
             }
-        
         self.timer = pygame.time.Clock()
         self.data_initer()
         self.screen = pygame.display.set_mode(
@@ -36,7 +33,8 @@ class Game:
             )
         pygame.display.set_caption(self.window_caption)
         
-    def stop_game():
+    def stop_game(self):
+        pass
         if 
     
     def data_initer(self):
@@ -49,14 +47,14 @@ class Game:
     def handle_input(self):
         for event in pygame.event.get():
             respone_func = self.input_respone.get(event.type, lambda k: None)
-            respone_func(event.__dict__)
+            respone_func(event)
     
     def run(self):
         try: 
-            self.sc_menu()
+            self.scene = sc_menu(self)
             while 1:
                 self.handle_input()
-                self.operate()
+                self.scene.run()
                 pygame.display.update()
                 self.timer.tick(self.max_fps)
         except Exception as e:
@@ -64,8 +62,7 @@ class Game:
         finally:
             pygame.quit()
             sys.exit()
-            
-    
+
 if __name__ == '__main__':
     mygame = Game()
     mygame.run()

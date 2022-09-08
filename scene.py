@@ -1,7 +1,7 @@
 from base import *
 
 class sc_menu:
-    def __init__(self):
+    def __init__(this, self):
         background = self.screen.blit(
             
             )
@@ -15,12 +15,15 @@ class sc_menu:
             ()
             )
         
-        self.operate = self.updater()
-        self.current_scene = 'menu'
         
-    def updater():
+    def run(this):
+        self = this.self
+        
         if in option:
             pass
+        #if change_scene_to_level:
+        #    self.scene = sc_level(self)
+    
 
 class sc_level:
     def __init__(self):
