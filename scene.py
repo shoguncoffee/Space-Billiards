@@ -1,14 +1,16 @@
 from base import *
+import pymunk
+from pymunk import Transform as Camera
+import pymunk.pygame_util
 
 class _scene_:
     def __init__(this, self):
-        self.screen = pygame
         this.self = self
-        self.pause = this.pause
         
     def respone(this):
         self = this.self
-        if : this.pause()
+        if : 
+            this.pause()
         this.on_respone()  
         
     def leave(this):
@@ -21,22 +23,28 @@ class _scene_:
     
     def enter(this):
         self = this.self
-        this.on_enter(this, self)
+        this.loading(this, self)
     
-    def on_enter():
+    def on_draw(this):
         pass
     
-    def on_respone():
+    def on_respone(this):
         pass    
     
-    def on_leave():
+    def on_leave(this):
         pass    
     
-    def on_pause():
+    def on_pause(this):
         pass
-
+    
+    def on_enter(this):
+        pass
+    
 
 class menu(_scene_):
+    def __init__(this, self):
+        super().__init__(self)
+    
     def load(self):
         background = self.screen.blit(
             
@@ -64,9 +72,42 @@ class menu(_scene_):
         pass
 
 
-class level(_scene_):
-    pass
+class _level_(_scene_):
+    translate_speed = 20
+    zoom_speed = 0.1
+    gravity = 700
+    dt = 0.01
+    I = pymunk.Transform()
+    
+    def __init__(this, self):
+        super().__init__(self)
+
+        
+    def on_enter(this):
+        this.space = pymunk.Space()
+        this.camera = Camera()
+        this.space.gravity = 0, -this.gravity
+        this.draw_option = pymunk.pygame_util.DrawOptions(this.self.window)
+        this.zoom_speed = .04
+        this.shift_speed = 10        
+        
+    def on_draw(this):
+        this.space.step()
+        this.space.debug_draw(this.draw_option)
+        this.self.window.fill((0, 0, 0))    
+        
+    def on_leave(this):
+        this.draw_options.transform = this.I
+        
+    def cameraman(this):
+        self = this.self
+        if this.player:
+            scaling *= 1 + zoom_speed*(k['zoom in'] - k['zoom out'])
+            translate = [t + q*this.shift_speed for q, t in zip((k['left'] - k['right'], k['up'] - k['down']), translate)]
+            print(round(scaling, 3), translate)
+            this.draw_options.transform = pymunk.Transform().translated(300, 300).scaled(scaling).translated(*translate).translated(-300, - 300)
 
 
-class lv_1(level):
-    pass
+class lv_1(_level_):
+    def __init__(this, self):
+        super().__init__(self)

@@ -1,4 +1,4 @@
-import pymunk
+import pymunk, pygame
 from base import *
 
 class Appearance:
@@ -9,7 +9,6 @@ class Appearance:
         self.
 
 class Interface(pygame.sprite.Sprite, Appearance):
-
     def __init__(self):
         super().__init__()
         

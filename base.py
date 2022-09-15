@@ -2,6 +2,7 @@ import pygame, sys
 import random
 import tqdm
 import pymunk
+import pymunk.pygame_util
 import json
 from time import *
 

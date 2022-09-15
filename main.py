@@ -1,6 +1,5 @@
 import pygame
 import pymunk, sys
-from base import raiser
 
 import scene
 from base import *
@@ -13,14 +12,13 @@ class Game:
     window_size = 800, 450
     color_bit = 8
     window_caption = ['shogun game', '', '']
-    gravity = 700
-    max_fps = 50
-    dt = 1/max_fps
+    max_fps = 60
     
     def __init__(self):
         pygame.init()
         self.init()
         self.timer = pygame.time.Clock()
+        
         
         self.input_respone = {
             pygame.QUIT: self.exit,
@@ -31,11 +29,7 @@ class Game:
             size=self.window_size,
             depth=self.color_bit*4
             )
-        self.scene = {cls.__name__ : cls(self) for cls in scene} # test   
-        
-        self.space = pymunk.Space()
-        self.space.gravity = 0, -self.gravity
-        self.draw_option = pymunk.pygame_util.DrawOptions(self.window)
+        self.scene = {cls.__name__ : cls(self) for cls in scene} # test
         
         self.goto('menu')
         self.run()
@@ -62,13 +56,10 @@ class Game:
         self.current_scene = self.scene[sc]
          
     def draw(self):
-        self.space.step(self.dt)
-        self.space.debug_draw(self.draw_option)
-        # self.window.fill()
+        self.current_scene.on_draw()
         pygame.display.update()
         pygame.display.set_caption(' '.join(self.window_caption))
         # getcaption = pygame.display.get_caption()[0]
-    
     
     def handle_input(self):
         self.press_key = pygame.key.get_pressed()
