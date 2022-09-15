@@ -1,7 +1,43 @@
 from base import *
 
-class sc_menu:
+class _scene_:
     def __init__(this, self):
+        self.screen = pygame
+        this.self = self
+        self.pause = this.pause
+        
+    def respone(this):
+        self = this.self
+        if : this.pause()
+        this.on_respone()  
+        
+    def leave(this):
+        self = this.self
+        this.on_leave()
+    
+    def pause(this):
+        self = this.self
+        this.on_respone(this, self)
+    
+    def enter(this):
+        self = this.self
+        this.on_enter(this, self)
+    
+    def on_enter():
+        pass
+    
+    def on_respone():
+        pass    
+    
+    def on_leave():
+        pass    
+    
+    def on_pause():
+        pass
+
+
+class menu(_scene_):
+    def load(self):
         background = self.screen.blit(
             
             )
@@ -14,50 +50,23 @@ class sc_menu:
             (),
             ()
             )
-        
-        
-    def run(this):
-        self = this.self
+    
+    def on_respone(self):
+    
         
         if in option:
             pass
-        #if change_scene_to_level:
-        #    self.scene = sc_level(self)
+        
+    def platform_collition():
+        pass
     
+    def on_pause():
+        pass
 
-class sc_level:
-    def __init__(self):
-        background = self.screen.blit(
-            
-            )
-        map = loadjson('map.json')
-        self.screen.blits(
-            (),
-            (),
-            (),
-            ()
-            )
-        
-        self.operate = self.updater()
-        
-    def updater():
-        if pass
-        
-        
-class sc_pause:
-    def __init__(self):
-        background = self.screen.blit(
-            
-            )
-        map = loadjson('map.json')
-        self.screen.blits(
-            (),
-            (),
-            (),
-            ()
-            )
-        
-        self.operate = self.updater()
-        
-    def updater():
-        if pass
+
+class level(_scene_):
+    pass
+
+
+class lv_1(level):
+    pass

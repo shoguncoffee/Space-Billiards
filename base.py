@@ -5,6 +5,12 @@ import pymunk
 import json
 from time import *
 
+class Exitgame(Exception):
+    pass
+
+def raiser(exception):
+    raise exception
+
 def json_to_dict(file):
     with open(file) as f:
         return json.load(f)

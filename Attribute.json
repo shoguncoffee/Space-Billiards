@@ -1,1 +1,62 @@
+{
+    "Character": {
+        "player": {
+            "img": {
+                "idle": {
+                    "file": [],
+                    "framerate": 2
+                },
+                "run": {
+                    "file": [],
+                    "framerate": 2
+                }
+            },
+            "hp": 100,
+            "speed": 20,
+            "regeneration": 1,
+            "melee": {
 
+            },
+            "spread": 0.3 
+        },
+        "kiki": {
+            "": ""
+        }, 
+        "boss": {
+            "": ""
+        }, 
+        "alien": {
+            "": ""
+        },
+        "monster": {
+            "": ""
+        }
+    },
+    "Material": {
+        "glass": {
+
+        },
+        "wood": {
+
+        }
+
+    },
+    "Things" :{
+
+    },
+    
+    "Text": {
+        "playgame_menu": {
+            "font": "",
+            "size": 16,
+            "color": "",
+            "option": {
+                "": ""
+            }
+        },
+        "option_menu": {
+            "": ""
+        }
+    }
+
+}
