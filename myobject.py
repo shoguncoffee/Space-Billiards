@@ -33,6 +33,9 @@ class Matter(Appearance):
     def moving():
         pass
 
+    def destroy():
+        pass
+
 class Material(Matter):
     def __init__(self, hp, mass, model, stemina, speed):
         
@@ -40,17 +43,18 @@ class Material(Matter):
         
     
         
-    def die():
-        pass 
 
 class Character(Matter):
     def __init__(self, hp, mass, model, stemina, speed):
         
         super().__init__(hp, mass, model)
+        self.status = 0
         
+        
+    def melee(self):
+        pass
     
-        
-    def melee():
+    def blood_splash(self, hardness):
         pass
 
 class Platform(Matter):
@@ -62,3 +66,6 @@ class Platform(Matter):
         pass
     
     
+    
+    
+#gun impact multiplyer

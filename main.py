@@ -1,82 +1,82 @@
-import pygame
-import pymunk, sys
+import pygame, pymunk, sys
 
 import scene
 from base import *
 from gui import *
 from item import *
 from myobject import *
-from scene import menu
 
 class Game:
     window_size = 800, 450
+    window_ratio = window_size[0]/window_size[1]
     color_bit = 8
-    window_caption = ['shogun game', '', '']
+    window_caption = {
+        'main': 'shogun game', 
+        '': '',
+        'pause': '', 
+        }
     max_fps = 60
+    step_per_frame = .135 * 60/max_fps
+    step_hz = 20
+    step_dt = step_per_frame/step_hz
     
-    def __init__(self):
-        pygame.init()
+    # init variable
+    def __init__(self): 
         self.init()
         self.timer = pygame.time.Clock()
-        
-        
         self.input_respone = {
             pygame.QUIT: self.exit,
             pygame.WINDOWFOCUSLOST: self.pause,
-            pygame.WINDOWRESIZED: self.pause
+            pygame.WINDOWRESIZED: self.resize,
             }
         self.window = pygame.display.set_mode(
             size=self.window_size,
-            depth=self.color_bit*4
+            depth=self.color_bit * 4
             )
-        self.scene = {cls.__name__ : cls(self) for cls in scene} # test
-        
-        self.goto('menu')
-        self.run()
+        self.scene = {cls.__name__ : cls(self) for cls in scene} # test 
+        self.current_scene = self.scene['menu']     
     
-    def init(self):
-        dataclass = Character, Weapon, Text
-        f = json_to_dict(f'{classname}_attribute.json')
-        for cls in dataclass:
-            classname = cls.__name__
-            data = f[classname]
-            info = {name: cls(**attr) for name, attr in data.items()}
-            setattr(self, classname, info)    
+    # init class
+    def init(self): 
+        pygame.init()
+        j = json_to_dict('Attribute.json')
+        for clsname, instance_group in j.items():
+            cls = globals()[clsname]
+            info = {name: cls(**attr) for name, attr in instance_group.items()}
+            setattr(self, clsname.lower, info)
             
     def pause(self):
         self.current_scene.pause()
-        self.window_caption[1] = '(pause)'
         
     def exit(self):
-        self.current_scene.exit()
-        sys.exit()
+        confirm = self.current_scene.exit()
+        if confirm: sys.exit()
+    
+    def resize(self):
+        self.pause()
         
     def goto(self, sc):
-        self.current_scene.on_leave()
+        self.current_scene.leave()
         self.current_scene = self.scene[sc]
-         
-    def draw(self):
-        self.current_scene.on_draw()
-        pygame.display.update()
-        pygame.display.set_caption(' '.join(self.window_caption))
-        # getcaption = pygame.display.get_caption()[0]
+        self.current_scene()
     
     def handle_input(self):
-        self.press_key = pygame.key.get_pressed()
+        self.key = pygame.key.get_pressed()
         for event in pygame.event.get():
-            respone_func = self.input_respone.get(event.type, lambda k: None)
-            respone_func(event)        
+            respone_func = self.input_respone.get(event.type, None)
+            if respone_func is not None: respone_func(event)        
     
     def run(self):
         try: 
             while 1: 
                 self.handle_input()
                 self.current_scene.respone()
-                self.draw()
+                self.current_scene.draw()
                 self.timer.tick(self.max_fps)
         finally: 
             pygame.quit()
 
 if __name__ == '__main__':
-    Game()
+    mygame = Game()
+    mygame.run()
     # assert x > 0, 'if false print this'
