@@ -1,82 +1,137 @@
-import pygame, pymunk, sys
-
-import scene
+from __future__ import annotations
 from base import *
-from gui import *
-from item import *
-from myobject import *
+
 
 class Game:
-    window_size = 800, 450
-    window_ratio = window_size[0]/window_size[1]
-    color_bit = 8
-    window_caption = {
-        'main': 'shogun game', 
-        '': '',
-        'pause': '', 
-        }
     max_fps = 60
-    step_per_frame = .135 * 60/max_fps
-    step_hz = 20
-    step_dt = step_per_frame/step_hz
-    
-    # init variable
-    def __init__(self): 
-        self.init()
-        self.timer = pygame.time.Clock()
-        self.input_respone = {
-            pygame.QUIT: self.exit,
-            pygame.WINDOWFOCUSLOST: self.pause,
-            pygame.WINDOWRESIZED: self.resize,
-            }
-        self.window = pygame.display.set_mode(
-            size=self.window_size,
-            depth=self.color_bit * 4
-            )
-        self.scene = {cls.__name__ : cls(self) for cls in scene} # test 
-        self.current_scene = self.scene['menu']     
-    
-    # init class
-    def init(self): 
+
+    def __init__(self):
+        self.start_time = nowtime()
         pygame.init()
-        j = json_to_dict('Attribute.json')
-        for clsname, instance_group in j.items():
-            cls = globals()[clsname]
-            info = {name: cls(**attr) for name, attr in instance_group.items()}
-            setattr(self, clsname.lower, info)
-            
-    def pause(self):
-        self.current_scene.pause()
-        
-    def exit(self):
-        confirm = self.current_scene.exit()
-        if confirm: sys.exit()
+        random.seed()
+        self.timer = pygame.time.Clock()
+        self.ticker = cycle(range(18_000))
+        self.tick = next(self.ticker)
+        self.input_response = {
+            pygame.QUIT: lambda: self.current_scene.goto('Exit'),
+            # pygame.WINDOWCLOSE: lambda: self.current_scene.pause(),
+        }
+        self.window = pygame.display.set_mode(
+            window_size,
+            pygame.SRCALPHA,
+            vsync = 1,
+        )
+        self.preloading()
+        self.init_scene()
+        pygame.mixer.music.load('sound/pool.mp3')
+        pygame.mixer.music.set_volume(.15)
+        pygame.mixer.music.play(-1)
     
-    def resize(self):
-        self.pause()
+    
+    def preloading(self):
+        import obj
+        class_pack = {cls.__name__: cls for cls in cls_from_module(obj)}
+        self.preloaded: dict[str, dict[str, obj_type]] = {}
         
-    def goto(self, sc):
-        self.current_scene.leave()
-        self.current_scene = self.scene[sc]
-        self.current_scene()
+        for clsname, instance_group in json_to_items('Attribute.json'):
+            cls = class_pack[clsname]
+            self.preloaded[clsname] = {}
+            for objname, attr in instance_group.items():
+                instance = cls(**attr, tag=objname)
+                self.preloaded[clsname][objname] = instance
+
+        path = __file__.split('\\')
+        path[-1] = 'sound'
+        path = '\\'.join(path)
+        self.fall = pygame.mixer.Sound(r'sound\fall.mp3')
+        self.fall.set_volume(.8)
+    
+    def init_scene(self):
+        self.scene: dict[str, scene_type] = {
+            cls.__name__: cls(self) for cls in cls_from_module(folder='scene')
+        }
+        self.openscene('Show')
+    
+    
+    def openscene(self, scene: str, **kw):
+        try: self.last_scene = self.current_scene.__class__.__name__
+        except: ...
+        self.current_scene = self.scene[scene]
+        self.current_scene.enter(**kw)
+    
+    @property
+    def key(self):
+        return self._key
+    
+    @property
+    def mouse(self): # [left, center, right]
+        return self._mouse
+    
+    @key.setter
+    def key(self, key):
+        try: self._cachekey = self.key
+        except: self._cachekey = key
+        self._key = key
+    
+    @mouse.setter
+    def mouse(self, mouse):
+        try: self._cachemouse = self.mouse
+        except: self._cachemouse = mouse
+        self._mouse = mouse
+        
+    def mousepress(self, c: int = 0):
+        new = self.mouse[c]
+        cache = self._cachemouse[c]
+        change = cache != new
+        return new, change
+    
+    def keypress(self, c: str | int):
+        key_code = pygame.key.key_code(c) if isinstance(c, str) else c
+        new = self.key[key_code]
+        cache = self._cachekey[key_code]
+        change = cache != new
+        return new, change
     
     def handle_input(self):
         self.key = pygame.key.get_pressed()
+        self.mouse = pygame.mouse.get_pressed()
+        
         for event in pygame.event.get():
-            respone_func = self.input_respone.get(event.type, None)
-            if respone_func is not None: respone_func(event)        
+            self.input_response.get(event.type, lambda: None)()
+    
+        
+    def draw(self):
+        self.buffer = self.window.copy()
+        self.buffer.set_alpha(85)
+        
+        self.window.fill(C_background)
+        self.window.blit(self.buffer, (0, 0), special_flags=pygame.BLEND_ALPHA_SDL2)
+        
+        self.current_scene.draw()
+        pygame.display.set_caption(
+            f'Space Billiard {round(self.timer.get_fps())}'
+        )
+        pygame.display.update()
+    
     
     def run(self):
-        try: 
-            while 1: 
-                self.handle_input()
-                self.current_scene.respone()
-                self.current_scene.draw()
-                self.timer.tick(self.max_fps)
-        finally: 
+        while 1: 
+            self.tick = next(self.ticker)
+            self.handle_input()
+            self.current_scene.response()
+            self.draw()
+            self.timer.tick(self.max_fps)
+    
+    
+    def __enter__(self):
+        return self
+            
+    def __exit__(self, type, value, traceback):
+        if type is Exitgame:
             pygame.quit()
+            return True
+
 
 if __name__ == '__main__':
-    mygame = Game()
-    mygame.run()
-    # assert x > 0, 'if false print this'
+    with Game() as mygame:
+        mygame.run()
