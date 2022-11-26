@@ -23,9 +23,12 @@ class Game:
         )
         self.preloading()
         self.init_scene()
-        pygame.mixer.music.load('sound/pool.mp3')
-        pygame.mixer.music.set_volume(.15)
-        pygame.mixer.music.play(-1)
+        try:
+            pygame.mixer.music.load('sound/pool.mp3')
+            pygame.mixer.music.set_volume(.15)
+            pygame.mixer.music.play(-1)
+        except (pygame.error, FileNotFoundError):
+            pass  # background music is not included in the repository
     
     
     def preloading(self):
